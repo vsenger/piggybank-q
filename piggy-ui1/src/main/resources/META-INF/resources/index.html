@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entry Management</title>
+</head>
+<body>
+    <h1>Entry Management</h1>
+    
+    <section id="crud-operations">
+        <h2>CRUD Operations</h2>
+        <form id="entry-form">
+            <label for="timestamp">Timestamp:</label>
+            <input type="datetime-local" id="timestamp" required><br>
+            
+            <label for="text">Text:</label>
+            <input type="text" id="text" required><br>
+            
+            <label for="longNumber">Long Number:</label>
+            <input type="number" id="longNumber" required><br>
+            
+            <label for="doubleNumber">Double Number:</label>
+            <input type="number" id="doubleNumber" step="0.01" required><br>
+            
+            <label for="bool">Boolean:</label>
+            <input type="checkbox" id="bool"><br>
+            
+            <button type="button" onclick="createEntry()">Create</button>
+            <button type="button" onclick="readEntry()">Read</button>
+            <button type="button" onclick="updateEntry()">Update</button>
+            <button type="button" onclick="deleteEntry()">Delete</button>
+        </form>
+    </section>
+    
+    <section id="list-entries">
+        <h2>List Entries</h2>
+        <form id="filter-form">
+            <label for="filterTimestamp">Timestamp:</label>
+            <input type="datetime-local" id="filterTimestamp"><br>
+            
+            <label for="filterText">Text:</label>
+            <input type="text" id="filterText"><br>
+            
+            <label for="filterLongNumber">Long Number:</label>
+            <input type="number" id="filterLongNumber"><br>
+            
+            <label for="filterDoubleNumber">Double Number:</label>
+            <input type="number" id="filterDoubleNumber" step="0.01"><br>
+            
+            <button type="button" onclick="listEntries()">Search</button>
+        </form>
+    </section>
+    
+    <div id="results"></div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
