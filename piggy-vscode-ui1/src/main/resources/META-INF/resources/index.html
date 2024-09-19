@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entry Management</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        h1, h2 { color: #333; }
+        form { margin-bottom: 20px; }
+        input, button { margin: 5px 0; }
+        #entryList { border: 1px solid #ddd; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Entry Management</h1>
+    
+    <h2>Add New Entry</h2>
+    <form id="addEntryForm">
+        <input type="text" id="accountID" placeholder="Account ID" required>
+        <input type="text" id="category" placeholder="Category" required>
+        <input type="number" id="amount" placeholder="Amount" step="0.01" required>
+        <input type="date" id="date" required>
+        <button type="submit">Add Entry</button>
+    </form>
+
+    <h2>Find Entries</h2>
+    <form id="findEntriesForm">
+        <input type="text" id="findAccountID" placeholder="Account ID">
+        <input type="text" id="findCategory" placeholder="Category">
+        <button type="submit">Find Entries</button>
+    </form>
+
+    <div id="entryList"></div>
+
+    <script>
+        const API_BASE_URL = '/entryResource';
+
+        // Function to add a new entry
+        async function addEntry(event) {
+            event.preventDefault();
+            const entry = {
+                accountID: document.getElementById('accountID').value,
+                category: document.getElementById('category').value,
+                amount: parseFloat(document.getElementById('amount').value),
+                date: document.getElementById('date').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(entry)
+                });
+                if (response.ok) {
+                    alert('Entry added successfully');
+                    document.getElementById('addEntryForm').reset();
+                    findEntries();
+                } else {
+                    throw new Error('Failed to add entry');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to add entry');
+            }
+        }
+
+        // Function to find entries
+        async function findEntries(event) {
+            if (event) event.preventDefault();
+            const accountID = document.getElementById('findAccountID').value;
+            const category = document.getElementById('findCategory').value;
+            let url = `${API_BASE_URL}/findAll`;
+
+            if (accountID && category) {
+                url = `${API_BASE_URL}/findByAccountCategory/${accountID}/${category}`;
+            } else if (accountID) {
+                url = `${API_BASE_URL}/findByAccount/${accountID}`;
+            } else if (category) {
+                url = `${API_BASE_URL}/findByCategory/${category}`;
+            }
+
+            try {
+                const response = await fetch(url);
+                const entries = await response.json();
+                displayEntries(entries);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to fetch entries');
+            }
+        }
+
+        // Function to display entries
+        function displayEntries(entries) {
+            const entryList = document.getElementById('entryList');
+            entryList.innerHTML = '';
+            if (entries.length === 0) {
+                entryList.innerHTML = '<p>No entries found.</p>';
+                return;
+            }
+            const table = document.createElement('table');
+            table.innerHTML = `
+                <tr>
+                    <th>Account ID</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                </tr>
+            `;
+            entries.forEach(entry => {
+                const row = table.insertRow();
+                row.innerHTML = `
+                    <td>${entry.accountID}</td>
+                    <td>${entry.category}</td>
+                    <td>${entry.amount}</td>
+                    <td>${entry.date}</td>
+                `;
+            });
+            entryList.appendChild(table);
+        }
+
+        // Event listeners
+        document.getElementById('addEntryForm').addEventListener('submit', addEntry);
+        document.getElementById('findEntriesForm').addEventListener('submit', findEntries);
+
+        // Initial load of all entries
+        findEntries();
+    </script>
+</body>
+</html>
